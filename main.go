@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"strconv"
 	"sync"
 )
@@ -84,7 +85,7 @@ func getData(chs chan<- Promo, id int, wg *sync.WaitGroup, url string) {
 		imageURL, _ := s.Find("img").Attr("src")
 
 		resDetail, err := http.Get(mainURL + URL)
-		fmt.Printf("\tRunning URL detail\t %v\n", mainURL+URL)
+		fmt.Printf("%d. %v\n", i, mainURL+URL)
 
 		if err != nil {
 			log.Fatal(err)
@@ -122,7 +123,7 @@ func getData(chs chan<- Promo, id int, wg *sync.WaitGroup, url string) {
 // Fetch Data
 func Fetch(url string) []Promo {
 
-	fmt.Printf("Sedang Mengambil data URL %v\n", url)
+	fmt.Printf("=> %v\n", url)
 
 	var wg sync.WaitGroup
 	cat1 := make(chan Paging, 0)
@@ -161,6 +162,8 @@ func Fetch(url string) []Promo {
 }
 
 func main() {
+	// set proccessor running
+	runtime.GOMAXPROCS(4)
 	os.Remove("solution.json")
 	// list category
 	sub := map[string]int{
